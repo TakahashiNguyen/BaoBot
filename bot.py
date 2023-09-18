@@ -1,10 +1,8 @@
 from discord import app_commands, Interaction, File
 from v2enlib import GSQLClass
 from discord.ext import tasks
-from random import randrange, choice
 from math import ceil
 from v2enlib import config
-from unidecode import unidecode
 
 import io, os
 
