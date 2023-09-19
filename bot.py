@@ -57,6 +57,16 @@ class BaoBai:
     async def update(self):
         self.updateData()
 
+    @staticmethod
+    def outputFormat(x):
+        return (
+            x.replace("*", "* ")
+            .replace("  ", " ")
+            .replace("* ", "")
+            .replace("Dặn dò:", "")
+            .replace("Dặn dò", "")
+        )
+
     def botCommands(self):
         @self.tree.command(name="all", description="Hiện tất cả báo bài của các môn")
         @app_commands.describe(so_tiet="Số tiết gần đây cần hiển thị (Mặc định: 5)")
@@ -71,9 +81,7 @@ class BaoBai:
                     for j in i[1]:
                         if any(x.isalpha() for x in j):
                             t_output += "".join(
-                                f"{z.replace('*D', '* D').replace('* Dặn dò:', '')}\n"
-                                for z in j.split("\n")
-                                if z
+                                f"{self.outputFormat(z)}\n" for z in j.split("\n") if z
                             )
                             passed = True
                     if passed:
@@ -98,9 +106,7 @@ class BaoBai:
                     for j in i[1]:
                         if any(x.isalpha() for x in j):
                             t_output += "".join(
-                                f"{z.replace('*D', '* D').replace('* Dặn dò:', '')}\n"
-                                for z in j.split("\n")
-                                if z
+                                f"{self.outputFormat(z)}\n" for z in j.split("\n") if z
                             )
                             passed = True
                     if passed:
