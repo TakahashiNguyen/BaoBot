@@ -58,9 +58,6 @@ class BaoBai:
     async def update(self):
         self.updateData()
 
-        w = ceil(os.get_terminal_size().columns / 3)
-        print(f"{'-'*w}\n\t\tUpdated!\n{'-'*w}")
-
     def botCommands(self):
         @self.tree.command(name="all", description="Hiện tất cả báo bài của các môn")
         @app_commands.describe(so_tiet="Số tiết gần đây cần hiển thị (Mặc định: 5)")
@@ -83,7 +80,7 @@ class BaoBai:
                     if passed:
                         l_output.append(t_output)
                 output += "".join(iter(l_output[-so_tiet:]))
-            file = File(io.StringIO(output), filename=f"{user_name}.yml")
+            file = File(io.StringIO(output), filename=f"{user_name}.txt")
             await ctx.response.send_message(
                 file=file, ephemeral=True, delete_after=36000
             )
@@ -108,7 +105,7 @@ class BaoBai:
                     if passed:
                         l_output.append(t_output)
                 output += "".join(iter(l_output[-so_tiet:]))
-                file = File(io.StringIO(output), filename=f"{user_name}.yml")
+                file = File(io.StringIO(output), filename=f"{user_name}.txt")
                 await ctx.response.send_message(
                     file=file, ephemeral=True, delete_after=36000
                 )
