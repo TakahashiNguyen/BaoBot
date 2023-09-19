@@ -49,10 +49,10 @@ async def on_ready():
 
 @client.event
 async def on_message(message: discord.Message):
-    if message.content.startswith("/"):
+    if message.type == discord.MessageType.chat_input_command:
         return
 
-    if (not message.reference or not message.reference.cached_message) and not message.author.bot:
+    if not message.author.bot:
         await message.delete()
 
 
