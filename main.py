@@ -2,6 +2,10 @@
 from v2enlib import config
 from time import sleep
 
+if config.replit:
+    from keepAlive import keep_alive
+
+    keep_alive()
 # DO NOT DELETE LINES ABOVE
 
 from bot import BaoBai
