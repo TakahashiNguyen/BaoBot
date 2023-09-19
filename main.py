@@ -52,7 +52,7 @@ async def on_message(message: discord.Message):
     if message.content.startswith("/"):
         return
 
-    if message.author != client.user:
+    if (not message.reference or not message.reference.cached_message) and not message.author.bot:
         await message.delete()
 
 
