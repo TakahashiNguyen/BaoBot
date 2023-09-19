@@ -1,7 +1,6 @@
-from discord import app_commands, Interaction, File
+from discord import app_commands, Interaction, File, Embed
 from v2enlib import GSQLClass
 from discord.ext import tasks
-from math import ceil
 from v2enlib import config
 
 import io, os
@@ -10,19 +9,19 @@ import io, os
 class BaoBai:
     __name__ = "BaoBai"
     subjects_name = [
+        "Toán",
         "Lý",
-        "Công nghệ",
-        "Sử",
-        "Anh",
         "Hóa",
         "Văn",
-        "Toán",
+        "Anh",
         "Sinh",
+        "Sử",
         "Địa",
+        "Công nghệ",
+        "Tin",
         "Thể dục",
         "GDQP",
         "GDCD",
-        "Tin",
     ]
     subjects = {i: {} for i in subjects_name}
 
@@ -62,52 +61,57 @@ class BaoBai:
         @self.tree.command(name="all", description="Hiện tất cả báo bài của các môn")
         @app_commands.describe(so_tiet="Số tiết gần đây cần hiển thị (Mặc định: 5)")
         async def all(ctx: Interaction, so_tiet: int = 5):
-            user_name = ctx.user.name
-            output = ""
-            for e in self.subjects.items():
-                output += f"Đây là báo bài của môn {e[0]} trong {so_tiet} tiết gần đây"
+            outputEmbeds = []
+            for e in list(self.subjects.items())[:10]:
                 l_output = []
                 for i in e[1].items():
-                    t_output, passed = f"\n    {i[0]}\n", False
+                    t_output, passed = f"\n{i[0]}\n", False
                     while i[1] and i[1][-1] == "":
                         i[1].pop()
                     for j in i[1]:
                         if any(x.isalpha() for x in j):
                             t_output += "".join(
-                                f"        {z}\n" for z in j.split("\n") if z
+                                f"{z.replace('*D', '* D').replace('* Dặn dò:', '')}\n"
+                                for z in j.split("\n")
+                                if z
                             )
                             passed = True
                     if passed:
-                        l_output.append(t_output)
-                output += "".join(iter(l_output[-so_tiet:]))
-            file = File(io.StringIO(output), filename=f"{user_name}.txt")
+                        l_output.append(t_output.replace("\n\n", "\n"))
+                outputEmbeds.append(
+                    Embed(title=e[0], description="".join(iter(l_output[-so_tiet:])))
+                )
             await ctx.response.send_message(
-                file=file, ephemeral=True, delete_after=36000
+                content=f"Đây là báo bài của các môn trong {so_tiet} tiết gần đây",
+                embeds=outputEmbeds,
+                ephemeral=True,
+                delete_after=36000,
             )
 
         def monHoc(mon: str):
             async def monHocSub(ctx: Interaction, so_tiet: int = 5):
-                user_name = ctx.user.name
-                output = (
-                    f"Đây là báo bài của môn {mon.lower()} trong {so_tiet} tiết gần đây"
-                )
                 l_output = []
                 for i in self.subjects[mon].items():
-                    t_output, passed = f"\n    {i[0]}\n", False
+                    t_output, passed = f"\n{i[0]}\n", False
                     while i[1] and i[1][-1] == "":
                         i[1].pop()
                     for j in i[1]:
                         if any(x.isalpha() for x in j):
                             t_output += "".join(
-                                f"        {z}\n" for z in j.split("\n") if z
+                                f"{z.replace('*D', '* D').replace('* Dặn dò:', '')}\n"
+                                for z in j.split("\n")
+                                if z
                             )
                             passed = True
                     if passed:
-                        l_output.append(t_output)
-                output += "".join(iter(l_output[-so_tiet:]))
-                file = File(io.StringIO(output), filename=f"{user_name}.txt")
+                        l_output.append(t_output.replace("\n\n", "\n"))
                 await ctx.response.send_message(
-                    file=file, ephemeral=True, delete_after=36000
+                    embed=Embed(
+                        title=f"Đây là báo bài của môn {mon.lower()} trong {so_tiet} tiết gần đây",
+                        description="".join(iter(l_output[-so_tiet:])),
+                    ),
+                    ephemeral=True,
+                    delete_after=36000,
                 )
 
             return monHocSub
