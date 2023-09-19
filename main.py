@@ -43,10 +43,13 @@ async def on_ready():
     print(f"{client.user} is ready to serve!")
 
 
-# bot commands
-@client.tree.command(name="hello", description="A hello to you :3")
-async def hello(ctx: discord.Interaction):
-    await ctx.response.send_message(f"Hello, {ctx.user.mention}!", ephemeral=True)
+@client.event
+async def on_message(message: discord.Message):
+    if message.content.startswith("/"):
+        return
+
+    if message.author != client.user:
+        await message.delete()
 
 
 if __name__ == "__main__":

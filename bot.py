@@ -84,7 +84,9 @@ class BaoBai:
                         l_output.append(t_output)
                 output += "".join(iter(l_output[-so_tiet:]))
             file = File(io.StringIO(output), filename=f"{user_name}.yml")
-            await ctx.response.send_message(file=file)
+            await ctx.response.send_message(
+                file=file, ephemeral=True, delete_after=36000
+            )
 
         def monHoc(mon: str):
             async def monHocSub(ctx: Interaction, so_tiet: int = 5):
@@ -107,7 +109,9 @@ class BaoBai:
                         l_output.append(t_output)
                 output += "".join(iter(l_output[-so_tiet:]))
                 file = File(io.StringIO(output), filename=f"{user_name}.yml")
-                await ctx.response.send_message(file=file)
+                await ctx.response.send_message(
+                    file=file, ephemeral=True, delete_after=36000
+                )
 
             return monHocSub
 
