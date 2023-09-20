@@ -61,6 +61,7 @@ class BaoBai:
             )
         )
         self.updateData()
+        sleep(10)
         await self.bot.change_presence(
             activity=Activity(name="lệnh /baobai", type=ActivityType.competing)
         )
