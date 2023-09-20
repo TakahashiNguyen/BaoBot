@@ -18,17 +18,18 @@ class Main:
         if self.executing:
             os.kill(os.getpid(), signal.SIGINT)
 
-    def __init__(self) -> None:
+    def __init__(self, bot) -> None:
         # init terminating methods
         signal.signal(signal.SIGTERM, self.on_press)
 
         # init values
         self.executing = True
+        self.bot = bot
         self.main()
 
     def main(self):
         # init groups
-        baobot = BaoBai()
+        baobot = BaoBai(self.bot)
 
         # init command groups
         client.tree.add_command(baobot.tree)
@@ -41,7 +42,7 @@ client = commands.Bot(command_prefix="/", intents=intents)
 # Bot events
 @client.event
 async def on_ready():
-    Main()
+    Main(client)
     await client.tree.sync()
     await client.wait_until_ready()
     print(f"{client.user} is ready to serve!")

@@ -1,9 +1,8 @@
-from discord import app_commands, Interaction, File, Embed
+from discord import app_commands, Interaction, Embed, Activity, ActivityType
 from v2enlib import GSQLClass
 from discord.ext import tasks
 from v2enlib import config
-
-import io, os
+from time import sleep
 
 
 class BaoBai:
@@ -25,10 +24,11 @@ class BaoBai:
     ]
     subjects = {i: {} for i in subjects_name}
 
-    def __init__(self) -> None:
+    def __init__(self, bot) -> None:
         self.tree = app_commands.Group(
             name="baobai", description="Truy vấn báo bài trên Google Sheet"
         )
+        self.bot = bot
 
         self.source = GSQLClass(config.baobai.link)
 
@@ -55,7 +55,15 @@ class BaoBai:
 
     @tasks.loop(seconds=config.baobai.update)
     async def update(self):
+        await self.bot.change_presence(
+            activity=Activity(
+                name="dữ liệu từ Google sheet", type=ActivityType.competing
+            )
+        )
         self.updateData()
+        await self.bot.change_presence(
+            activity=Activity(name="lệnh /baobai", type=ActivityType.competing)
+        )
 
     @staticmethod
     def outputFormat(x):
