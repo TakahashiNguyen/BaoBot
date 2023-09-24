@@ -2,7 +2,6 @@ from discord import app_commands, Interaction, Embed, Activity, ActivityType
 from v2enlib import GSQLClass
 from discord.ext import tasks
 from v2enlib import config
-from time import sleep
 
 
 class BaoBai:
@@ -45,13 +44,15 @@ class BaoBai:
                 continue
             for j in range(1, sheet.col_len() - 1):
                 thu = data[1][j].split("\n")[1][1:-1]
-                for i in range(3, sheet.row_len()):
+                for i in range(3, sheet.row_len() - 1):
                     if data[i][j] in self.subjects_name:
                         try:
                             if data[i + 1][j] not in self.subjects[data[i][j]][thu]:
                                 self.subjects[data[i][j]][thu].append(data[i + 1][j])
                         except KeyError:
                             self.subjects[data[i][j]][thu] = [data[i + 1][j]]
+                        except IndexError:
+                            pass
 
     @tasks.loop(seconds=config.baobai.update)
     async def update(self):
@@ -61,7 +62,6 @@ class BaoBai:
             )
         )
         self.updateData()
-        sleep(10)
         await self.bot.change_presence(
             activity=Activity(name="lệnh /baobai", type=ActivityType.competing)
         )
